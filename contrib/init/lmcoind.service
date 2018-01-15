@@ -1,0 +1,22 @@
+[Unit]
+Description=Lmcoin's distributed currency daemon
+After=network.target
+
+[Service]
+User=lmcoin
+Group=lmcoin
+
+Type=forking
+PIDFile=/var/lib/lmcoind/lmcoind.pid
+ExecStart=/usr/bin/lmcoind -daemon -pid=/var/lib/lmcoind/lmcoind.pid \
+-conf=/etc/lmcoin/lmcoin.conf -datadir=/var/lib/lmcoind -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

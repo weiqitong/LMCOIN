@@ -1,0 +1,6 @@
+usr/local/bin/lmcoin-qt usr/bin
+share/pixmaps/lmcoin32.xpm usr/share/pixmaps
+share/pixmaps/lmcoin16.xpm usr/share/pixmaps
+share/pixmaps/lmcoin128.png usr/share/pixmaps
+debian/lmcoin-qt.desktop usr/share/applications
+debian/lmcoin-qt.protocol usr/share/kde4/services/

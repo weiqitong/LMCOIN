@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Lmcoin
+Comment=Lmcoin P2P Cryptocurrency
+Comment[fr]=Lmcoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Lmcoin, eşten eşe kriptografik sanal para birimi
+Exec=lmcoin-qt %u
+Terminal=false
+Type=Application
+Icon=lmcoin128
+MimeType=x-scheme-handler/lmcoin;
+Categories=Office;Finance;

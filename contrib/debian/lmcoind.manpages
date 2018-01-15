@@ -1,0 +1,3 @@
+debian/manpages/lmcoind.1
+debian/manpages/lmcoin.conf.5
+debian/manpages/lmcoin-cli.1

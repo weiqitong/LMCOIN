@@ -1,0 +1,33 @@
+# /etc/conf.d/lmcoind: config file for /etc/init.d/lmcoind
+
+# Config file location
+#LMCOIND_CONFIGFILE="/etc/lmcoin/lmcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $LMCOIND_USER)
+#LMCOIND_PIDDIR="/var/run/lmcoind"
+
+# What filename to give the pidfile
+#LMCOIND_PIDFILE="${LMCOIND_PIDDIR}/lmcoind.pid"
+
+# Where to write lmcoind data (be mindful that the blockchain is large)
+#LMCOIND_DATADIR="/var/lib/lmcoind"
+
+# User and group to own lmcoind process
+#LMCOIND_USER="lmcoin"
+#LMCOIND_GROUP="lmcoin"
+
+# Path to lmcoind executable
+#LMCOIND_BIN="/usr/bin/lmcoind"
+
+# Nice value to run lmcoind under
+#LMCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+LMCOIND_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for lmcoind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+LMCOIND_SIGTERM_TIMEOUT=60

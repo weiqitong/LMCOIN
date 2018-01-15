@@ -1,0 +1,1 @@
+qt/qt_liblmcoinqt_a-qrc_lmcoin_locale.o: qt/qrc_lmcoin_locale.cpp

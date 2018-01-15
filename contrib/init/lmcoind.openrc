@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/lmcoin/.lmcoin" ]; then
+	LMCOIND_DEFAULT_DATADIR="/var/lib/lmcoin/.lmcoin"
+else
+	LMCOIND_DEFAULT_DATADIR="/var/lib/lmcoind"
+fi
+
+LMCOIND_CONFIGFILE=${LMCOIND_CONFIGFILE:-/etc/lmcoin/lmcoin.conf}
+LMCOIND_PIDDIR=${LMCOIND_PIDDIR:-/var/run/lmcoind}
+LMCOIND_PIDFILE=${LMCOIND_PIDFILE:-${LMCOIND_PIDDIR}/lmcoind.pid}
+LMCOIND_DATADIR=${LMCOIND_DATADIR:-${LMCOIND_DEFAULT_DATADIR}}
+LMCOIND_USER=${LMCOIND_USER:-${LMCOIN_USER:-lmcoin}}
+LMCOIND_GROUP=${LMCOIND_GROUP:-lmcoin}
+LMCOIND_BIN=${LMCOIND_BIN:-/usr/bin/lmcoind}
+LMCOIND_NICE=${LMCOIND_NICE:-${NICELEVEL:-0}}
+LMCOIND_OPTS="${LMCOIND_OPTS:-${LMCOIN_OPTS}}"
+
+name="Lmcoin Core Daemon"
+description="Lmcoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/lmcoind"
+command_args="-pid=\"${LMCOIND_PIDFILE}\" \
+		-conf=\"${LMCOIND_CONFIGFILE}\" \
+		-datadir=\"${LMCOIND_DATADIR}\" \
+		-daemon \
+		${LMCOIND_OPTS}"
+
+required_files="${LMCOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${LMCOIND_USER} \
+			-N ${LMCOIND_NICE} -w 2000"
+pidfile="${LMCOIND_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${LMCOIND_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${LMCOIND_USER}:${LMCOIND_GROUP}" \
+	"${LMCOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${LMCOIND_USER}:${LMCOIND_GROUP}" \
+	"${LMCOIND_PIDDIR}"
+
+	checkpath -f \
+	-o ${LMCOIND_USER}:${LMCOIND_GROUP} \
+	-m 0660 \
+	${LMCOIND_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${LMCOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run lmcoind."
+		eerror "The setting must appear in ${LMCOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Lmcoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

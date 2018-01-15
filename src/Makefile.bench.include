@@ -1,0 +1,45 @@
+bin_PROGRAMS += bench/bench_lmcoin
+BENCH_SRCDIR = bench
+BENCH_BINARY = bench/bench_lmcoin$(EXEEXT)
+
+
+bench_bench_lmcoin_SOURCES = \
+  bench/bench_lmcoin.cpp \
+  bench/bench.cpp \
+  bench/bench.h \
+  bench/Examples.cpp
+
+bench_bench_lmcoin_CPPFLAGS = $(AM_CPPFLAGS) $(LMCOIN_INCLUDES) $(EVENT_CLFAGS) $(EVENT_PTHREADS_CFLAGS) -I$(builddir)/bench/
+bench_bench_lmcoin_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+bench_bench_lmcoin_LDADD = \
+  $(LIBLMCOIN_SERVER) \
+  $(LIBLMCOIN_COMMON) \
+  $(LIBLMCOIN_UNIVALUE) \
+  $(LIBLMCOIN_UTIL) \
+  $(LIBLMCOIN_CRYPTO) \
+  $(LIBLEVELDB) \
+  $(LIBMEMENV) \
+  $(LIBSECP256K1)
+
+if ENABLE_ZMQ
+bench_bench_lmcoin_LDADD += $(LIBLMCOIN_ZMQ) $(ZMQ_LIBS)
+endif
+
+if ENABLE_WALLET
+bench_bench_lmcoin_LDADD += $(LIBLMCOIN_WALLET)
+endif
+
+bench_bench_lmcoin_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+bench_bench_lmcoin_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+CLEAN_LMCOIN_BENCH = bench/*.gcda bench/*.gcno
+
+CLEANFILES += $(CLEAN_LMCOIN_BENCH)
+
+lmcoin_bench: $(BENCH_BINARY)
+
+bench: $(BENCH_BINARY) FORCE
+	$(BENCH_BINARY)
+
+lmcoin_bench_clean : FORCE
+	rm -f $(CLEAN_LMCOIN_BENCH) $(bench_bench_lmcoin_OBJECTS) $(BENCH_BINARY)

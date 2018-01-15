@@ -1,0 +1,11 @@
+prefix=/home/caoliang/LMCCC/depends/x86_64-w64-mingw32
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Lmcoin Core consensus library
+Description: Library for the Lmcoin consensus protocol.
+Version: 0.12.1
+Libs: -L${libdir} -llmcoinconsensus
+Cflags: -I${includedir}
+Requires.private: libcrypto
